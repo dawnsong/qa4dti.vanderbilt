@@ -20,7 +20,8 @@ for boot=2:bootNum+1
     end
 
   
-   FA(boot,:)=DTIfit_A(vox,BootData,b,gtable);
+   %FA(boot,:)=DTIfit_A(vox,BootData,b,gtable);
+   FA(boot,:)=dawn_DTIfit_A(vox,BootData,b,gtable);
    
 end
 FAboot=FA;
