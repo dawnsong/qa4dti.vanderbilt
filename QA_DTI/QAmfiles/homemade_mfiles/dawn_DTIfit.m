@@ -42,7 +42,7 @@ function [FAsim ]=dawn_DTIfit(vox,nosim,dwi,bo,sigma_hat,b,g,n_bo)
          ddtensor(:,find(masksum>0))=0; %clear all NaN 3x3 matrix
          dlambda=eig3(reshape(ddtensor, [3, 3, vox])); %3xn
          dMD=mean(dlambda); %1xn
-         dFA=1.224744871391589 * sqrt(sum((dlambda-repmat(dMD, [1,3])).^2)) ./ sqrt(sum(dlambda.^2)) ; %1xn
+         dFA=1.224744871391589 * sqrt(sum((dlambda-repmat(dMD, [3,1])).^2)) ./ sqrt(sum(dlambda.^2)) ; %1xn
          FAsim=FAsim + dFA/nosim;
 
     end
