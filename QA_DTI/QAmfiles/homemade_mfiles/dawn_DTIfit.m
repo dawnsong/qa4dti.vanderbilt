@@ -43,7 +43,7 @@ function [FAsim ]=dawn_DTIfit(vox,nosim,dwi,bo,sigma_hat,b,g,n_bo)
          dlambda=eig3(reshape(ddtensor, [3, 3, vox])); %3xn
          dMD=mean(dlambda); %1xn
          dFA=1.224744871391589 * sqrt(sum((dlambda-repmat(dMD, [3,1])).^2)) ./ sqrt(sum(dlambda.^2)) ; %1xn
-         FAsim=FAsim + dFA/nosim;
+         FAsim=FAsim + dFA'/nosim;
 
     end
   
