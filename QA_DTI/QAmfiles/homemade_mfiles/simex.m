@@ -10,15 +10,17 @@ dwiObs=R(1:end-1,:); boObs=R(end,:);
 grads=grad_file';
 gtable=[grads.^2  2*grads(:,1).*grads(:,2) 2*grads(:,1).*grads(:,3) 2*grads(:,3).*grads(:,2)];
 
-
-
-for jj=1:nana   
-  
+matlabpool close
+try
+    matlabpool open
+    parfor jj=1:nana   
         sig = lambda_sqrt(jj)*sigmaEst;
         sim=nosim(jj);
         [FAsnr{jj} ]=dawn_DTIfit(vox,sim,dwiObs,boObs,sig,b,gtable, n_bo);
-
+    end
+catch err,
 end
+matlabpool close
 
 
  FA=zeros(vox,nana);

@@ -588,7 +588,7 @@ sampleVox2=ModelData(:,NewMask); Errors=Errors(:,NewMask);
 FAsample=FA(NewMask);
 FAboot=boot(sampleVox2, Errors, bval_vec,grad_file(:,1:end-1),bootnum,FAsample');
 ffstd=nanstd(FAboot);
-nm=sprintf('%s/ModelData',trble);
+nm=sprintf('%s/ModelData',trble),
 save(nm,'ModelData')
 clear FAboot ModelData Errors;
 
