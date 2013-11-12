@@ -1,0 +1,7 @@
+[lauzonc@elm fileformats_toolbox]$ !cp loadPAR.m /scratch/lauzonc/mfiles/QAmfiles/QA_DTI/
+cp loadPARREC.m /fs2/lauzonc/notebook/2012/120529_QA_final_Adam/mfiles/QA_DTI/ loadPAR.m ../QA_DTI/ loadPAR.m /scratch/lauzonc/mfiles/QAmfiles/QA_DTI/
+cp: omitting directory `/fs2/lauzonc/notebook/2012/120529_QA_final_Adam/mfiles/QA_DTI/'
+cp: omitting directory `../QA_DTI/'
+cp: warning: source file `loadPAR.m' specified more than once
+[lauzonc@elm fileformats_toolbox]$ 
+

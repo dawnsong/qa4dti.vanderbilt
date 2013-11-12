@@ -1,0 +1,8 @@
+*multi-atlas*
+*qa.dti.doc*
+*.nii
+*.nii.gz
+*.hdr
+*.img
+*.mat
+
