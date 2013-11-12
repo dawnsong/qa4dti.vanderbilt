@@ -10,7 +10,7 @@ dwiObs=R(1:end-1,:); boObs=R(end,:);
 grads=grad_file';
 gtable=[grads.^2  2*grads(:,1).*grads(:,2) 2*grads(:,1).*grads(:,3) 2*grads(:,3).*grads(:,2)];
 
-matlabpool close
+%matlabpool close
 try
     matlabpool open
     parfor jj=1:nana   
