@@ -183,6 +183,7 @@ if ~exist(out_dir, 'dir')
     mkdir(out_dir);
 end
 
+atlases_file, labels_file,
 atlases = textread(atlases_file, '%s');
 labels = textread(labels_file, '%s');
 
