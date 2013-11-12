@@ -16,7 +16,7 @@ for jj=1:nana
   
         sig = lambda_sqrt(jj)*sigmaEst;
         sim=nosim(jj);
-        [FAsnr{jj} ]=DTIfit(vox,sim,dwiObs,boObs,sig,b,gtable, n_bo);
+        [FAsnr{jj} ]=dawn_DTIfit(vox,sim,dwiObs,boObs,sig,b,gtable, n_bo);
 
 end
 
