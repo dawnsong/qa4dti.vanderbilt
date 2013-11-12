@@ -173,10 +173,10 @@ eval(cmmd)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 progress='Finished masking. Performing multi-atlas segmentation and noise estimation'
 % ANDREW CODEsettings
-art_home = sprintf( '%s/multi-atlas/art', QAmfiles_loc );  %%%%%%%%%% andrew codeSERVER
-nlsloc = sprintf('%s/multi-atlas/nls', QAmfiles_loc);    %%%%%%%%%%SERVER
-atlases_file = sprintf('%s/multi-atlas/atlas_dir/atlases.txt', QAmfiles_loc); %%% location of atlases
-labels_file = sprintf('%s/multi-atlas/atlas_dir/labels.txt', QAmfiles_loc); %%% location of labels
+art_home = sprintf( '%s/../multi-atlas/art', QAmfiles_loc );  %%%%%%%%%% andrew codeSERVER
+nlsloc = sprintf('%s/../multi-atlas/nls', QAmfiles_loc);    %%%%%%%%%%SERVER
+atlases_file = sprintf('%s/../multi-atlas/atlas_dir/atlases.txt', QAmfiles_loc); %%% location of atlases
+labels_file = sprintf('%s/../multi-atlas/atlas_dir/labels.txt', QAmfiles_loc); %%% location of labels
 targets = {name_bo_ref};
 out_dir = sprintf('%s%smulti-atlas',output_folder,filesep);
 if ~exist(out_dir, 'dir')
