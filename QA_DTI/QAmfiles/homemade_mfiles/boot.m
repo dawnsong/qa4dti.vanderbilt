@@ -11,19 +11,28 @@ vox=size(ModelData,2);
 FA = zeros(bootNum+1,size(FAobs,2)); FA(1,:)=FAobs;
 BootData=zeros(size(ModelData));
 checkA=zeros(size(FA)); checkA(1,:)=ones(1,size(FA,2));
-for boot=2:bootNum+1
-       neg = (randn(size(ModelData))<0); %50% chance positive, 50% chance negative
-       randsign=ones(size(ModelData));
-       randsign(neg)=-1;
-    for m=1:vox
-        BootData(:,m) = ModelData(:,m)+(randsample(Errors(:,m),size(ModelData,1),'true').*randsign(:,m)); 
+
+try
+    matlabpool open
+    parfor boot=2:bootNum+1
+           neg = (randn(size(ModelData))<0); %50% chance positive, 50% chance negative
+           randsign=ones(size(ModelData));
+           randsign(neg)=-1;
+        for m=1:vox
+            BootData(:,m) = ModelData(:,m)+(randsample(Errors(:,m),size(ModelData,1),'true').*randsign(:,m)); 
+        end
+
+      
+       %FA(boot,:)=DTIfit_A(vox,BootData,b,gtable);
+       FA(boot,:)=dawn_DTIfit_A(vox,BootData,b,gtable);
+       
     end
 
-  
-   %FA(boot,:)=DTIfit_A(vox,BootData,b,gtable);
-   FA(boot,:)=dawn_DTIfit_A(vox,BootData,b,gtable);
-   
+except err,
 end
+matlabpool close
+
+
 FAboot=FA;
     
 % % %     D = gtable\(-log(ModelData)/1000);   % [ 6 by #voxels]

@@ -186,6 +186,9 @@ end
 atlases_file, labels_file,
 atlases = textread(atlases_file, '%s');
 labels = textread(labels_file, '%s');
+%dawnsong
+atlas  =regexprep(atlas,  '^(.*)',sprintf('%s/../multi-atlas/atlas_dir/$1', QAmfiles_loc));
+labels =regexprep(labels, '^(.*)',sprintf('%s/../multi-atlas/atlas_dir/$1', QAmfiles_loc));
 
 [out_atlas_dir out_labels_dir out_warp_dir] = run_art_registrations_single(atlases, labels, targets, out_dir, art_home); % register atlas and labels to target, save in out_dir
 segs = run_nls_fusions_single(atlases, labels, targets, out_dir, out_atlas_dir, out_labels_dir, nlsloc); % fuses atlases, segs is file location of final label
