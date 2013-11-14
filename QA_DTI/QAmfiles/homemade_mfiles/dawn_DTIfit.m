@@ -46,6 +46,4 @@ function [FAsim ]=dawn_DTIfit(vox,nosim,dwi,bo,sigma_hat,b,g,n_bo)
          FAsim=FAsim + dFA'/nosim;
 
     end
-  
 
-  

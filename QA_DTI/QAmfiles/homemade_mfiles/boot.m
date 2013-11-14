@@ -18,9 +18,11 @@ try
            neg = (randn(size(ModelData))<0); %50% chance positive, 50% chance negative
            randsign=ones(size(ModelData));
            randsign(neg)=-1;
+        save(sprintf('~/tmp/boot.bf.%d.mat', boot))
         for m=1:vox
             BootData(:,m) = ModelData(:,m)+(randsample(Errors(:,m),size(ModelData,1),'true').*randsign(:,m)); 
         end
+        save(sprintf('~/tmp/boot.af.%d.mat', boot))
 
       
        %FA(boot,:)=DTIfit_A(vox,BootData,b,gtable);
