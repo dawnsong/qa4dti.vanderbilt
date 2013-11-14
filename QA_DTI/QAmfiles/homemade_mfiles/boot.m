@@ -15,19 +15,19 @@ checkA=zeros(size(FA)); checkA(1,:)=ones(1,size(FA,2));
 try
     matlabpool open
     parfor boot=2:bootNum+1
-           neg = (randn(size(ModelData))<0); %50% chance positive, 50% chance negative
-           randsign=ones(size(ModelData));
-           randsign(neg)=-1;
-        save(sprintf('~/tmp/boot.bf.%d.mat', boot))
-        for m=1:vox
-            BootData(:,m) = ModelData(:,m)+(randsample(Errors(:,m),size(ModelData,1),'true').*randsign(:,m)); 
-        end
-        save(sprintf('~/tmp/boot.af.%d.mat', boot))
+%%%%        neg = (randn(size(ModelData))<0); %50% chance positive, 50% chance negative
+%%%%        randsign=ones(size(ModelData));
+%%%%        randsign(neg)=-1;
+%%%%        for m=1:vox
+%%%%            BootData(:,m) = ModelData(:,m)+(randsample(Errors(:,m),size(ModelData,1),'true').*randsign(:,m)); 
+%%%%        end
+%%%%
+        %Speedup by Xiaowei Song
+       randsign = 1 - 2* (0.5>rand(size(ModelData)));
+       BootData=ModelData+ randsign .* datasample(Error,size(ModelData,1));
 
-      
        %FA(boot,:)=DTIfit_A(vox,BootData,b,gtable);
        FA(boot,:)=dawn_DTIfit_A(vox,BootData,b,gtable);
-       
     end
 
 except err,
