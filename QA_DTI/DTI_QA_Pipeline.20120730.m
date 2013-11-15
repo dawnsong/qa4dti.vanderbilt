@@ -7,6 +7,8 @@ function [reportFile, state] = DTI_QA_Pipeline(file_name,output_folder,path_to_Q
 % bootnum=5;
 % numsim = [1 3 3 3 3];
 
+%dawnsong to profile
+timeStart=clock;
 
 % %%% NORMAL RUN VALUES
 flag=18; % parameter controlling voxel sub-sampling for Bootstrap and SIMEX
@@ -116,6 +118,7 @@ progress='Finished loading data. Registering DWI to Bo'
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %                             DTI PROCESSING
+printElapsedTime(timeStart, 'DTI PROCESSING');
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -139,6 +142,7 @@ clear Y_data dwi Reg_ImA%.......................................................
 nii=make_nii(Reg_Im,resolution,[0 0 0],16); nii.hdr.dime.xyzt_units=2; name_RegIm=sprintf('%s%sRegIm.nii',tmp,filesep); save_nii(nii,name_RegIm);
 cmmd=sprintf('!cp %s %s',name_RegIm,trble);
 eval(cmmd)
+printElapsedTime(timeStart, 'REGISTRATION done');
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %PREPARE GRAD TABLE
@@ -152,6 +156,7 @@ for vol=1:Ng
     grad_file(1:3,vol)=R*grad_file(1:3,vol);
 end
     clear  R FT F%.........
+printElapsedTime(timeStart, 'Gradient table Rotation done');
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %MASK, strict one for stats loose one for DTI calc
@@ -167,6 +172,8 @@ cmmd=sprintf('!bet %s %s -f 0.2 -g 0 -m',name_bo_ref,name_Mask); %for use with c
 eval(cmmd)
 cmmd=sprintf('!bet %s %s -f 0.4 -g 0 -m',name_bo_ref,name_Mask2);%for statistical analysis 
 eval(cmmd) 
+
+printElapsedTime(timeStart, 'Masking done');
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %MASK ROIs and estimate sigma
@@ -215,6 +222,8 @@ end
 m=median(ROI_sig,2); s=sort(m); sigmaEst=s(2);
 cmmd=sprintf('save %s%ssigmaEst sigmaEst',trble,filesep);
 eval(cmmd)
+
+printElapsedTime(timeStart, 'Segmentation done');
 
 clear Y ROI_sig s RR labelBo%__________________________________________________________clearline
 % %%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -300,6 +309,8 @@ nm=sprintf('%s%sOutlierMask.nii',trble,filesep);
 save_nii(nii,nm);
 clear nii H Y_dwi Ydata art_home atlases atlases_file g gr scan_info_text scheme out_warp_dir out_labels_dir out_dir OutlierMask nm 
 clear T %_______________________________________________________________________________clear line
+printElapsedTime(timeStart, 'CAMINO-RESTORE DTI calc done');
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %                              STATISTICS
@@ -538,6 +549,8 @@ close(gcf)
 
 
 clear stat_mask brain Mask_dwi_vec yh ym xxx slice slice_order slice_Ax mask_slice m labels RR2n labels_file hhh h ho csqp colmap
+
+printElapsedTime(timeStart, 'Page-1 done');
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%   PAGE 2    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% %%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -582,6 +595,9 @@ clear R %_____________________________________________________________________cl
 [FAsmx Bias]=simex(sampleVox,bval_vec,grad_file(:,1:end-1),sigmaEst,n_bo, numsim);
 clear FAsmx %____________________________________________________________________-clear line
 clear sampleVox
+
+printElapsedTime(timeStart, 'SIMEX done');
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %BOOT (not with RESTORE yet?)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -594,6 +610,8 @@ ffstd=nanstd(FAboot);
 nm=sprintf('%s/ModelData',trble),
 save(nm,'ModelData')
 clear FAboot ModelData Errors;
+
+printElapsedTime(timeStart, 'Bootstrap done');
 
 page2SimAndBoot_KKI_array %______________________________________________________________clear lines within code
 
@@ -638,6 +656,7 @@ set(gcf,'PaperPosition',[.2 .15 8.2 10.7]);
 print('-dpsc2','-append',testps,gcf);
 close(gcf)
 
+printElapsedTime(timeStart, 'Page-3 done');
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%   PAGE 4  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% %%%%%
@@ -666,6 +685,9 @@ clear av dtmap
 set(gcf,'PaperPosition',[.2 .15 8.2 10.7]);
 print('-dpsc2','-append',testps,gcf);
 close(gcf)
+
+printElapsedTime(timeStart, 'Page-4 done');
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%  PUT OUTPUTS IN FOLDER %%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -689,7 +711,9 @@ close all
 cmmd=sprintf('!rm -r %s',tmp);
 eval(cmmd)
 progress='Pipeline Completed'
-  
-       
-   
 
+%dawnsong, print status msg
+function printElapsedTime(AStartClock, AMsg)
+    if nargin<2, AMsg=''; end
+    e=etime(clock, AStartClock);
+    fprintf('\n%s\t\t%s\nElapsed: %.0g:%.0g:%.3g\n',datestr(now) ,AMsg,  e/60/60, e/60, mod(e, 60));
