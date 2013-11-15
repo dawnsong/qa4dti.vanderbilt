@@ -31,8 +31,9 @@ try
     end
 
 except err,
+    rest_misc('DisplayLastException');
 end
-matlabpool close
+matlabpool close force local 
 
 
 FAboot=FA;

@@ -19,8 +19,9 @@ try
         [FAsnr{jj} ]=dawn_DTIfit(vox,sim,dwiObs,boObs,sig,b,gtable, n_bo);
     end
 catch err,
+    rest_misc('DisplayLastException');
 end
-matlabpool close
+matlabpool close force local 
 
 
  FA=zeros(vox,nana);
