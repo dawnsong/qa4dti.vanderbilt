@@ -716,4 +716,4 @@ progress='Pipeline Completed'
 function printElapsedTime(AStartClock, AMsg)
     if nargin<2, AMsg=''; end
     e=etime(clock, AStartClock);
-    fprintf('\n%s\t\t%s\nElapsed: %.0g:%.0g:%.3g\n',datestr(now) ,AMsg,  e/60/60, e/60, mod(e, 60));
+    fprintf('\n%%#% %s\t%s\n%%#% Elapsed: %d:%d:%d\n',datestr(now) ,AMsg,  floor(e/60/60), floor(e/60), mod(e, 60));
