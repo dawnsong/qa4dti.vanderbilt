@@ -468,53 +468,53 @@ imagesc(RR); ct=get(gca,'clim'); ct(2)=ct(2)/2;
 close(100)
 clear RR M mm a d 
 for b=1:num
-        t=1:num; t=flipdim(t,2);
-        name=['handles.axes' num2str(t(b)*2-1)];
-        en=round(div*b*Nz); %determine end value for sampling M
-        M=map(:,st:en);
-        mm=min(reshape(M,[],1));
-        [a d]=find(M==mm);
-        axes(eval(name))
-        RR = squeeze(RI(:,:,st+d(1)-1,a(1)));
-        RR = permute(RR, [2 1]); RR=flipdim(RR,1); RR=repmat(RR,[1 1 3]);
-        RRn=imadjust(RR, ct, [0 1]);
-        imagesc(RRn); 
-        
-        if b==num
-            text(Nx*.02,Ny*.1,'(grd,slice)','fontsize',9,'color',[1 0 0],'fontweight','bold')
-            text(Nx*.66,Ny*.1,'Chi-Sq','fontsize',9,'color',[1 0 0])
-        end
-        set(gca,'visible','off','clim',ct);
-        mm=round(mm*1000)/1000;
-        if mm>1
-            value='> 1.0';
-        else
-            value=num2str(mm);
-        end
-        text(Nx*.7,Ny*.94,value,'fontsize',9,'color',[1 0 0])
-        location=['(' num2str(a(1)) ',' num2str(st+d(1)-1) ')'];
-        text(Nx*.03,Ny*.94,location,'fontsize',9,'color',[1 0 0])
-        mm=max(reshape(M,[],1));
-        [f g]=find(M==mm);
-        name2=['handles.axes' num2str( t(b)*2 )];
-        axes(eval(name2))
-        RR2 = RI(:,:,st+g(1)-1,f(1));
-        RR2 = permute(RR2, [2 1]); RR2=flipdim(RR2,1);RR2=repmat(RR2,[1 1 3]);
-        RR2n=imadjust(RR2,ct,[0 1]);
-        imagesc(RR2n); %colormap(gray); 
-        set(gca,'clim',ct);
-        set(gca,'visible','off')
-        location=['(' num2str(f(1)) ',' num2str(st+g(1)-1) ')'];
-        mm=round(mm*1000)/1000;
-       if mm>1
-            value='> 1.0';
-        else
-            value=num2str(mm);
-        end
-        text(Nx*.03,Ny*.94,location,'fontsize',9,'color',[1 0 0])
-        text(Nx*.7,Ny*.94,value,'fontsize',9,'color',[1 0 0])
-        st=en+1;
+    t=1:num; t=flipdim(t,2);
+    name=['handles.axes' num2str(t(b)*2-1)];
+    en=round(div*b*Nz); %determine end value for sampling M
+    M=map(:,st:en);
+    mm=min(reshape(M,[],1));
+    [a d]=find(M==mm);
+    axes(eval(name))
+    RR = squeeze(RI(:,:,st+d(1)-1,a(1)));
+    RR = permute(RR, [2 1]); RR=flipdim(RR,1); RR=repmat(RR,[1 1 3]);
+    RRn=imadjust(RR, ct, [0 1]);
+    imagesc(RRn); 
+    
+    if b==num
+        text(Nx*.02,Ny*.1,'(grd,slice)','fontsize',9,'color',[1 0 0],'fontweight','bold')
+        text(Nx*.66,Ny*.1,'Chi-Sq','fontsize',9,'color',[1 0 0])
     end
+    set(gca,'visible','off','clim',ct);
+    mm=round(mm*1000)/1000;
+    if mm>1
+        value='> 1.0';
+    else
+        value=num2str(mm);
+    end
+    text(Nx*.7,Ny*.94,value,'fontsize',9,'color',[1 0 0])
+    location=['(' num2str(a(1)) ',' num2str(st+d(1)-1) ')'];
+    text(Nx*.03,Ny*.94,location,'fontsize',9,'color',[1 0 0])
+    mm=max(reshape(M,[],1));
+    [f g]=find(M==mm);
+    name2=['handles.axes' num2str( t(b)*2 )];
+    axes(eval(name2))
+    RR2 = RI(:,:,st+g(1)-1,f(1));
+    RR2 = permute(RR2, [2 1]); RR2=flipdim(RR2,1);RR2=repmat(RR2,[1 1 3]);
+    RR2n=imadjust(RR2,ct,[0 1]);
+    imagesc(RR2n); %colormap(gray); 
+    set(gca,'clim',ct);
+    set(gca,'visible','off')
+    location=['(' num2str(f(1)) ',' num2str(st+g(1)-1) ')'];
+    mm=round(mm*1000)/1000;
+    if mm>1
+        value='> 1.0';
+    else
+        value=num2str(mm);
+    end
+    text(Nx*.03,Ny*.94,location,'fontsize',9,'color',[1 0 0])
+    text(Nx*.7,Ny*.94,value,'fontsize',9,'color',[1 0 0])
+    st=en+1;
+end
 clear RR RI RR2 RRn mm value st en %____________________________________________________________________clear line
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 % % PLOT MAP  
@@ -716,4 +716,4 @@ progress='Pipeline Completed'
 function printElapsedTime(AStartClock, AMsg)
     if nargin<2, AMsg=''; end
     e=etime(clock, AStartClock);
-    fprintf('\n%%#% %s\t%s\n%%#% Elapsed: %d:%d:%d\n',datestr(now) ,AMsg,  floor(e/60/60), floor(e/60), mod(e, 60));
+    fprintf('\n### %s\t%s\n### Elapsed: %d:%d:%d\n',datestr(now) ,AMsg,  floor(e/60/60), floor(e/60), mod(e, 60));

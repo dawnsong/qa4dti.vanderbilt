@@ -31,7 +31,7 @@ while [ $# -gt 0 ]; do
 done
 
 runxdummy -x && source ~/.xdummy
-scrot $(getmp ~/tmp/).scr.png
+scrot $(getmp ).scr.png
 
 infile=$(readlink -f $1);
 outdir=$(readlink -f ${2:-qa4dti.vanderbilt.output})
@@ -39,16 +39,17 @@ mkdir -p $outdir
 
 export FSLOUTPUTTYPE=NIFTI_GZ
 matlab -nodesktop -nosplash <<eom
-qa_path='/home/xst833/fmri/vanderbilt/qa4dti/QA_DTI';
-addpath(genpath(qa_path));
+QA_pathname='/home/xst833/fmri/vanderbilt/qa4dti/QA_DTI'
+java_path=sprintf('%s%smulti-atlas%smasi-fusion%sbin%s',QA_pathname,filesep,filesep,filesep,filesep)
+
+addpath(genpath(QA_pathname));
+javaaddpath(java_path);
 
 infile='$infile'; %.nii/_bvals/_bvecs must be paried
 outdir='$outdir';
 
-java_path=sprintf('%s%smulti-atlas%smasi-fusion%sbin%s',QA_pathname,filesep,filesep,filesep,filesep)
-javaaddpath(java_path);
 
 %Run
-DTI_QA_Pipeline(infile, outdir, qa_path);
+DTI_QA_Pipeline(infile, outdir, QA_pathname);
 eom
 
