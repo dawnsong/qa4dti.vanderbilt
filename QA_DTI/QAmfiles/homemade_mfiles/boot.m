@@ -24,7 +24,7 @@ try
 %%%%
         %Speedup by Xiaowei Song
        randsign = 1 - 2* (0.5>rand(size(ModelData)));
-       BootData=ModelData+ randsign .* datasample(Error,size(ModelData,1));
+       BootData=ModelData+ randsign .* datasample(Errors,size(ModelData,1));
 
        %FA(boot,:)=DTIfit_A(vox,BootData,b,gtable);
        FA(boot,:)=dawn_DTIfit_A(vox,BootData,b,gtable);
