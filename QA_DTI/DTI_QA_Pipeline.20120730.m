@@ -142,7 +142,7 @@ if exist('target','var')
     !flirt -in bo_ref -ref targ -out temp -omat Taff -cost mutualinfo
     [ah avs]=system('avscale --allparams aff targ');
     [tranTARG rotTARG]=readAVS(avs);
-    !gunzip temp.nii.gz
+    !gunzip -f  temp.nii.gz
     load Taff;
     T1=load_nii('temp.nii'); Reg_ImA(:,:,:,end)=single(T1.img);
     !rm temp*
@@ -202,7 +202,7 @@ eval(cmmd)
 
 
 %unzip mask files
-cmmd=sprintf('!gunzip %s%s*.gz',tmp,filesep);
+cmmd=sprintf('!gunzip -f  %s%s*.gz',tmp,filesep);
 eval(cmmd);
 %%%%whos %% WHOS
 %%%%%find center of mass
@@ -277,7 +277,7 @@ progress='Finished segmentation. Running CAMINO-RESTORE diffusion tensor fit'
 %    eval(cmmd)
     
 %unzip mask files
-cmmd=sprintf('!gunzip %s%s*.gz',tmp,filesep);
+cmmd=sprintf('!gunzip -f  %s%s*.gz',tmp,filesep);
 eval(cmmd);
 
     %make scheme table
