@@ -194,12 +194,14 @@ pack
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %MASK, strict one for stats loose one for DTI calc.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-name_Mask2=sprintf('%s%sMask2',tmp,filesep); name_Mask=sprintf('%s%sMask',tmp,filesep);
+name_Mask2=sprintf('%s%sMask2',tmp,filesep); 
+name_Mask=sprintf('%s%sMask',tmp,filesep);
 
 cmmd=sprintf('!bet %s %s -f 0.2 -g 0 -m -R ',name_bo_ref, name_Mask); %for camino
 eval(cmmd);
 cmmd=sprintf('!bet %s %s -f 0.4 -g 0 -m -R ',name_bo_ref,name_Mask2);%for statistical analysis
 eval(cmmd)
+
 
 %clear any existing mask files so code doesnt need user input
 cmmd=sprintf('!rm %s%sMas*.nii',tmp,filesep);

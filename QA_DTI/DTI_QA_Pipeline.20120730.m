@@ -1,7 +1,9 @@
-function [reportFile, state] = DTI_QA_Pipeline(file_name,output_folder,path_to_QA_DTI)
+function [reportFile, state] = DTI_QA_Pipeline(file_name,output_folder,path_to_QA_DTI, n_bo, target)
 %note for author: function from DTI_QA_Report_V17, 120730_QA_DTI.tar
 %this is release version 1.0
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%Xiaowei Song, Change according to version 1.2
+%2013111
 %%% TROUBLESHOOTING VALUES
 % flag=1;
 % bootnum=5;
@@ -16,53 +18,57 @@ bootnum=1000; % bootstrap monte-carlo simulation numbers
 numsim = [1 2000 4000 6000 8000]; %SIMEX monte-carlo simulation numbers
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-n_bo=5;  %% number of averaged Bo images in Bo.
+%n_bo=1;  %% number of averaged Bo images in Bo. 
+if exist('n_bo','var')==0
+    n_bo=1; % number of averaged Bo in data
+end
+%has effect in simex.m/dawn_DTIfit.m, dawnsong
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%% BEGIN MAIN PROGRAM %%%%%%% 
 
 progress='Loading data. Converting to RAS nifti'
-QAmfiles_loc=sprintf('%s%sQAmfiles%s',path_to_QA_DTI,filesep,filesep);
+QAmfiles_loc=sprintf('%s/QAmfiles/',path_to_QA_DTI);
 
 %%flag = 0 for short run, else flag = time in hours for BOOT+SIMEX (should be 6+)
 
 limchi=.2;
-trble=sprintf('%s%sextra',output_folder,filesep);
-tmp=sprintf('%s%stemp_folder',output_folder,filesep);
+trble=sprintf('%s/extra',output_folder);
+tmp=sprintf('%s/temp_folder',output_folder);
 mkdir(trble)
 mkdir(tmp)
-testps=sprintf('%s%stemp.ps',tmp,filesep);
+testps=sprintf('%s/qa4dti.ps',tmp);
 %%%%%%%%%%%%%%%%%%%%%%%
 %%%EXTRACT FILE PARTS
 %%%%%%%%%%%%%%%%%%%%%
 [P,Fname,E]=fileparts(file_name);
-     name_fig1=sprintf('%s/homemade_mfiles/DTI_calp1.fig',QAmfiles_loc);
-    fig = openfig(name_fig1);
-    handles = guihandles(fig);
-    name_text={}; 
-    name_text{end+1}=sprintf('filename: %s',Fname);
-    name_text{end+1} = sprintf('folder: %s',P);
-    set(handles.text18,'String',name_text,'fontsize',9);
-    verStr = '1.0';
+name_fig1=sprintf('%s/homemade_mfiles/DTI_calp1.fig',QAmfiles_loc);
+fig = openfig(name_fig1);
+handles = guihandles(fig);
+name_text={}; 
+name_text{end+1}=sprintf('filename: %s',Fname);
+name_text{end+1} = sprintf('folder: %s',P);
+set(handles.text18,'String',name_text,'fontsize',9);
+verStr = '1.0';
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%% Prepatory Processing Depedning on if PARREC OR NII
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
- niiname=file_name;
- if isempty(E)==1
+niiname=file_name;
+if isempty(E)==1
     cmmd=sprintf('%s.PAR',file_name);
     if exist(cmmd)~=0
         E='PAR';
     end
-     cmmd=sprintf('%s.par',file_name);
+    cmmd=sprintf('%s.par',file_name);
     if exist(cmmd)~=0
         E='par';
     end
     cmmd=sprintf('%s.nii',file_name);
-   
+    
     if exist(cmmd)~=0
         E='nii';
-        niiname=sprintf('%s.nii',file_name); 
+        niiname=sprintf('%s.nii',file_name);
         if exist('target','var')~=0
             target=sprintf('%s.nii',target);
         end
@@ -70,10 +76,10 @@ testps=sprintf('%s%stemp.ps',tmp,filesep);
 end
 
 if E(1)=='P' | E(2)=='P' |E(1)=='p' | E(2)=='p'
-   getParinfoV4
-    if exist('target','var') 
+    getParinfoV4
+    if exist('target','var')
         target=loadPARREC(target);
-        HT=target.hdr; targ=target.scans; 
+        HT=target.hdr; targ=target.scans;
         if HT.img.orient.slice_orientation==1
             targ=targ(end:-1:1,end:-1:1,:);
         end
@@ -81,38 +87,40 @@ if E(1)=='P' | E(2)=='P' |E(1)=='p' | E(2)=='p'
             targ=permute(targ,[1 3 2]);
             targ=flipdim(targ,3); targ=flipdim(targ,2); targ=flipdim(targ,3);
         end
-          
+        
         resolutionT=HT.scn.fov(3)/size(Ydata,1);  %%RL divide by xdimension
         resolutionT(2)=HT.scn.fov(1)/size(Ydata,2); %%AP divide by ydimension
         resolutionT(3)=HT.scn.fov(2)/size(Ydata,3); %%FH divide by number of slices, slices MUST be FH!!
         nii=make_nii(targ, resolutionT,[0 0 0],16); save_nii(nii,'targ.nii')
     end
 else
-   
+    
     [scan_info_text grad_file bval_vec resolution name_Y_data]= getNIIinfo(tmp,niiname);
-   
+    
     if exist('target','var')
-        HT=load_nii(target); targ=HT.img; 
+        HT=load_nii(target); targ=HT.img;
         resolutionT=HT.hdr.dime.pixdim(2:4);
         nii=make_nii(targ, resolutionT,[0 0 0],16); save_nii(nii,'targ.nii')
     end
 end
+whos %% WHOS
+set(handles.text2,'String',scan_info_text,'fontsize',7);
 
-    set(handles.text2,'String',scan_info_text,'fontsize',9);
-
-   %grad)file is 3 columns, bval_vec is one row%  .................................................................................................................clear line
+%grad)file is 3 columns, bval_vec is one row%  .................................................................................................................clear line
 
 % load data from nii
 Y=load_nii(name_Y_data);
-Y_data=Y.img;
+Y_data=single(Y.img);
+clear Y %_________________________________________________________________________clear line
+pack
 Nx = size(Y_data,1);
 Ny = size(Y_data,2);
 Nz = size(Y_data,3);
 Nt = size(Y_data,4);
 Ng = Nt-1; %number dwi weighted images
-Reg_ImA=zeros(size(Y_data)); % last entry in Reg_im will be Bo
-Reg_ImA(:,:,:,end)=Y_data(:,:,:,end);
-clear Y %_________________________________________________________________________clear line
+Reg_Im=zeros(size(Y_data),'single'); % last entry in Reg_im will be Bo
+Reg_Im(:,:,:,end)=single(Y_data(:,:,:,end));
+
 
 progress='Finished loading data. Registering DWI to Bo'
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -123,22 +131,35 @@ printElapsedTime(timeStart, 'DTI PROCESSING');
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%% REGISTRATION 
+%%% REGISTRATION To Target If Exists
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 bo_ref= make_nii(Y_data(:,:,:,end),resolution,[0 0 0], 16); bo_ref.hdr.dime.xyzt_units=2; name_bo_ref=sprintf('%s%sbo_ref.nii',tmp,filesep);
 save_nii(bo_ref,name_bo_ref);
+tranTARG=zeros(1,3,'single'); rotTARG=tranTARG;
 
+if exist('target','var')
+    !flirt -in bo_ref -ref targ -out temp -omat Taff -cost mutualinfo
+    [ah avs]=system('avscale --allparams aff targ');
+    [tranTARG rotTARG]=readAVS(avs);
+    !gunzip temp.nii.gz
+    load Taff;
+    T1=load_nii('temp.nii'); Reg_Im(:,:,:,end)=single(T1.img);
+    !rm temp*
+end
+whos %% WHOS
 name_reg=sprintf('%s%s%s_registered.mat',tmp,filesep,Fname);
+name_reg2=sprintf('%s%sRegistration_motion.mat',trble,filesep);
 if exist(name_reg)~=0
-        load(name_reg)
-    else
-        register_c
-        save(name_reg,'Reg_Im', 'affMat', 'rotation', 'translation')
+    load(name_reg)
+else
+    register_c
+    save(name_reg,'Reg_Im', 'affMat', 'rotation', 'translation')
+    save(name_reg2,'affMat','rotation','translation');
 end
 
-
-clear Y_data dwi Reg_ImA%...........................................................................................................................clear line
+clear Y_data dwi%...........................................................................................................................clear line
+pack
 nii=make_nii(Reg_Im,resolution,[0 0 0],16); nii.hdr.dime.xyzt_units=2; name_RegIm=sprintf('%s%sRegIm.nii',tmp,filesep); save_nii(nii,name_RegIm);
 cmmd=sprintf('!cp %s %s',name_RegIm,trble);
 eval(cmmd)
@@ -155,26 +176,49 @@ for vol=1:Ng
     R=((F*FT)^-.5)*F;
     grad_file(1:3,vol)=R*grad_file(1:3,vol);
 end
-    clear  R FT F%.........
+clear  R FT F%.........
+pack
 printElapsedTime(timeStart, 'Gradient table Rotation done');
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %MASK, strict one for stats loose one for DTI calc
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 progress='Finished gradient table rotation. Masking bo'
-name_Mask=sprintf('%s%sMask',tmp,filesep); name_Mask2=sprintf('%s%sMask2',tmp,filesep);
+name_Mask=sprintf('%s%sMask',tmp,filesep); 
+name_Mask2=sprintf('%s%sMask2',tmp,filesep);
 
 %%%%cmmd=sprintf('!LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu/:$LD_LIBRARY_PATH  bet %s %s -f 0.2 -g 0 -m',name_bo_ref,name_Mask); %for use with camino
 %%%%eval(cmmd)
 %%%%cmmd=sprintf('!LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu/:$LD_LIBRARY_PATH  bet %s %s -f 0.4 -g 0 -m',name_bo_ref,name_Mask2);%for statistical analysis 
 %%%%eval(cmmd) 
-cmmd=sprintf('!bet %s %s -f 0.2 -g 0 -m',name_bo_ref,name_Mask); %for use with camino
+cmmd=sprintf('!bet %s %s -f 0.2 -g 0 -m -R',name_bo_ref,name_Mask); %for use with camino
 eval(cmmd)
-cmmd=sprintf('!bet %s %s -f 0.4 -g 0 -m',name_bo_ref,name_Mask2);%for statistical analysis 
+cmmd=sprintf('!bet %s %s -f 0.4 -g 0 -m -R',name_bo_ref,name_Mask2);%for statistical analysis 
 eval(cmmd) 
 
-printElapsedTime(timeStart, 'Masking done');
 
+
+
+
+%clear any existing mask files so code doesnt need user input
+cmmd=sprintf('!rm %s%sMas*.nii',tmp,filesep);
+eval(cmmd)
+
+%unzip mask files
+cmmd=sprintf('!gunzip %s%s*.gz',tmp,filesep);
+eval(cmmd);
+whos %% WHOS
+%find center of mass
+tem_name=sprintf('%s_mask.nii',name_Mask);
+temp=load_nii(tem_name); temp=temp.img;
+%[centerX centerY centerZ]=com(temp); 
+%dawnsong revise
+[centerX centerY centerZ]=temp.hdr.dime(2:4)/2; 
+centerX=round(centerX); centerY=round(centerY); centerZ=round(centerZ); %find better center of image
+clear temp tem_name
+pack
+
+printElapsedTime(timeStart, 'Masking done');
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %MASK ROIs and estimate sigma
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -226,6 +270,7 @@ eval(cmmd)
 printElapsedTime(timeStart, 'Segmentation done');
 
 clear Y ROI_sig s RR labelBo%__________________________________________________________clearline
+pack
 % %%%%%%%%%%%%%%%%%%%%%%%%%%
 % %%%CAMINO DTI FIT
 % %%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -258,6 +303,7 @@ eval(cmmd);
     name_dwi_Bfloat=sprintf('%s%sdwi.Bfloat',tmp,filesep);
     cmmd=sprintf('!image2voxel -4dimage %s -outputfile %s',name_RegIm,name_dwi_Bfloat);
     eval(cmmd)
+
 
     %fit tensor with ROBUST fit
     name_outliermap=sprintf('%s%soutliermap',tmp,filesep);
@@ -365,11 +411,14 @@ end
 Mask_dwi_vec=Mask_data_vec(:,1:end-1);
 clear   M2 Mask_data_vec gives%...................................................................................................clear line
 
+
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %CALCULATE CHI_2
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 progress='Calculating pixel-chi-squared.'
-name_tensor_dt_nii=sprintf('%s%stensor_dt.nii',tmp,filesep);
+name_tensor_dt_nii=sprintf('%s/tensor_dt.nii',tmp);
 T=load_nii(name_tensor_dt_nii); T=T.img;
 name_md_nii=sprintf('%s%smd.nii',tmp,filesep); name_fa_nii=sprintf('%s%sfa.nii',tmp,filesep);
 ADC=load_nii(name_md_nii); ADC=reshape(ADC.img,[],1);
@@ -378,13 +427,16 @@ FA=load_nii(name_fa_nii); FA=reshape(FA.img,[],1);
 mADC=ADC(brain); mFA=FA(brain);
 stdFA=std(FA(brain)); stdADC=std(ADC(brain));
 
-[sd ModelData Errors]=calDTIrevC_norm(T,grad_file,bval_vec,Reg_Im,dti_mask);
+[sd ModelData Errors]=calDTIrevC_norm(single(T),single(grad_file),single(bval_vec),Reg_Im,dti_mask);
 
 clear T ADC FA mADC mFA stdFA stdADC dti_mask%______________________________________________________-clear line
+pack
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % % %   MAKE MAP OF CHI-2
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-map=zeros(Ng,Nz);
+map=zeros(Ng,Nz,'single');
+
+sd(brain==0)=0; %use more restricted mask
 brain_vol=reshape(brain,Nx,Ny,Nz);
 sd=reshape(sd,Nx,Ny,Nz,Ng);
 for volume=1:Ng
@@ -396,7 +448,9 @@ for volume=1:Ng
     end
 end
 clear sss sdf k ks brain_vol %..................................................................................................................clear line
- 
+pack
+savename=sprintf('%s/voxel_wise_chi_q',trble);
+save(savename,'sd','map')
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % % %  PLOT Projections of MAP
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% % %     
@@ -404,13 +458,13 @@ hite=trimmean(map,3); %%remove from ev
 mite=trimmean(map',3)';
 
 axes(handles.axes36) %%gradient number
- plot(1:Ng,mite,'k','linewidth',2);
-    %ylabel('mean Chi Sq','fontweight','bold')
-    set(gca,'Yaxislocation','right','box','off','linewidth',2,'fontweight','demi')
-    fax=[0.4405    0.4990    0.4550    0.0769];
-    set(gca,'Position',fax,'TickDir','in','XTickLabel',''); 
-    axis tight
-    glim=get(gca,'ylim'); set(gca,'ylim',[0 glim(2)],'linewidth',2)
+plot(1:Ng,mite,'k','linewidth',2);
+%ylabel('mean Chi Sq','fontweight','bold')
+set(gca,'Yaxislocation','right','box','off','linewidth',2,'fontweight','demi')
+fax=[0.4405    0.4990    0.4550    0.0769];
+set(gca,'Position',fax,'TickDir','in','XTickLabel','');
+axis tight
+glim=get(gca,'ylim'); set(gca,'ylim',[0 glim(2)],'linewidth',2)
 
 axes(handles.axes29)  %%axial slice
 plot(hite, 1:Nz,'k','linewidth',2);
@@ -423,10 +477,17 @@ set(gca,'xlim',[0 glim(2)],'linewidth',2,'XTick',[0 floor(10000*glim(2))/10000],
 pos2=[0.3360    0.0697    0.0969    0.4259];
 set(gca,'Position',pos2);
 clear hite mite %___________________________________________________________________________-clear line
+pack
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%
  % PLOT RESTORE OUTLIERS
  %%%%%%%%%%%%%%%%%%%%%%%%
+for g=1:Ng
+    
+    T=OutlierMask(:,:,:,g);
+    T=T(:); T=T(brain);
+    outs(g)=(sum(T)/sum(brain))*100;
+end
  axes(handles.axes40) %%gradient number
 
  plot(1:Ng,outs,'k','linewidth',2);
@@ -436,8 +497,9 @@ clear hite mite %_______________________________________________________________
     xlabel('gradient #')
     ylabel('% outliers','fontweight','demi')
     axis tight
-   
+save(sprintf('%s/Outliers', trble), 'outs')
   clear outs %____________________________________________________________________________________-clear line
+pack
  %%%%%%%%%%%%%%%%%%%%%%%%%%
  % MAKE HIST OF CHI_2
  %%%%%%%%%%%%%%%%%%%%%%%%
@@ -447,6 +509,7 @@ savename=sprintf('%s/voxel_wise_chi_q',trble);
 save(savename,'sd','map')
 
 clear MM chisq chi_sq_p sd xx h%..........................................%%%..............................................................clear line
+pack
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 % % PLOT MAP-EXAMPLES  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%   
@@ -455,6 +518,7 @@ div=1/num;
 st=1;
 
 mx=max(max(max(max(Reg_Im)))); RI=Reg_Im/mx;
+whos %% WHOS
 % determine caxis from several values
 figure(100)
 delta=round(Nz/6); deltag=round(Ng/5);
@@ -467,6 +531,7 @@ end
 imagesc(RR); ct=get(gca,'clim'); ct(2)=ct(2)/2;
 close(100)
 clear RR M mm a d 
+pack
 for b=1:num
     t=1:num; t=flipdim(t,2);
     name=['handles.axes' num2str(t(b)*2-1)];
@@ -515,7 +580,9 @@ for b=1:num
     text(Nx*.7,Ny*.94,value,'fontsize',9,'color',[1 0 0])
     st=en+1;
 end
+whos %% WHOS
 clear RR RI RR2 RRn mm value st en %____________________________________________________________________clear line
+pack
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 % % PLOT MAP  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -536,7 +603,7 @@ set(gca,'Xaxislocation','bottom','Yaxislocation','right','linewidth',2,'TickDir'
 xlabel('Gradient #','fontsize',14,'fontweight','bold')
 ylabel('Axial Slice #','fontsize', 14,'fontweight','bold')
 clear map Reg_Im M%...............................................................................................................clear line
-
+pack
 % F=getframe(fig);
 % close(fig)
 % figure(1)
@@ -549,6 +616,8 @@ close(gcf)
 
 
 clear stat_mask brain Mask_dwi_vec yh ym xxx slice slice_order slice_Ax mask_slice m labels RR2n labels_file hhh h ho csqp colmap
+pack
+
 
 printElapsedTime(timeStart, 'Page-1 done');
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -567,6 +636,7 @@ page2FAMD_KKI_array %_____________________________________________clear lines wi
 
 
 clear grp
+pack
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %SHRINK DATA FOR SIMEX AND BOOT
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -595,7 +665,7 @@ clear R %_____________________________________________________________________cl
 [FAsmx Bias]=simex(sampleVox,bval_vec,grad_file(:,1:end-1),sigmaEst,n_bo, numsim);
 clear FAsmx %____________________________________________________________________-clear line
 clear sampleVox
-
+pack
 printElapsedTime(timeStart, 'SIMEX done');
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -609,8 +679,9 @@ FAboot=boot(sampleVox2, Errors, bval_vec,grad_file(:,1:end-1),bootnum,FAsample')
 ffstd=nanstd(FAboot);
 nm=sprintf('%s/ModelData',trble),
 save(nm,'ModelData')
+whos %% WHOS
 clear FAboot ModelData Errors;
-
+pack
 printElapsedTime(timeStart, 'Bootstrap done');
 
 page2SimAndBoot_KKI_array %______________________________________________________________clear lines within code
@@ -651,6 +722,7 @@ V1=ones(Nx,Ny,Nz,3);
     clear FA V1 nobrain_b dteig temp%____________________________________________clear line
     page3checkV1_v2 %______________________________________________________________clear lines in code
     clear cc %___________________________________________________________________clear line
+
 
 set(gcf,'PaperPosition',[.2 .15 8.2 10.7]);
 print('-dpsc2','-append',testps,gcf);
@@ -716,4 +788,4 @@ progress='Pipeline Completed'
 function printElapsedTime(AStartClock, AMsg)
     if nargin<2, AMsg=''; end
     e=etime(clock, AStartClock);
-    fprintf('\n### %s\t%s\n### Elapsed: %d:%d:%d\n',datestr(now) ,AMsg,  floor(e/60/60), floor(e/60), mod(e, 60));
+    fprintf('\n### %s\t%s\n### Elapsed: %d:%d:%d\n',datestr(now) ,AMsg,  floor(e/60/60), mod(floor(e/60), 60), mod(ceil(e), 60));
