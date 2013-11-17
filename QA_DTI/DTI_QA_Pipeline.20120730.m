@@ -184,8 +184,8 @@ printElapsedTime(timeStart, 'Gradient table Rotation done');
 %MASK, strict one for stats loose one for DTI calc
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 progress='Finished gradient table rotation. Masking bo'
-name_Mask=sprintf('%s%sMask',tmp,filesep); 
-name_Mask2=sprintf('%s%sMask2',tmp,filesep);
+name_Mask=sprintf('%s/Mask',tmp); 
+name_Mask2=sprintf('%s/Mask2',tmp);
 
 %%%%cmmd=sprintf('!LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu/:$LD_LIBRARY_PATH  bet %s %s -f 0.2 -g 0 -m',name_bo_ref,name_Mask); %for use with camino
 %%%%eval(cmmd)
@@ -200,9 +200,9 @@ eval(cmmd)
 
 
 
-%clear any existing mask files so code doesnt need user input
-cmmd=sprintf('!rm %s%sMas*.nii',tmp,filesep);
-eval(cmmd)
+%%%%clear any existing mask files so code doesnt need user input
+%%%cmmd=sprintf('!rm %s%sMas*.nii',tmp,filesep);
+%%%eval(cmmd)
 
 %unzip mask files
 cmmd=sprintf('!gunzip %s%s*.gz',tmp,filesep);
