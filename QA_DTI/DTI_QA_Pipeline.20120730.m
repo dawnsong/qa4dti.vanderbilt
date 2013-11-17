@@ -191,9 +191,9 @@ name_Mask2=sprintf('%s%sMask2',tmp,filesep);
 %%%%eval(cmmd)
 %%%%cmmd=sprintf('!LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu/:$LD_LIBRARY_PATH  bet %s %s -f 0.4 -g 0 -m',name_bo_ref,name_Mask2);%for statistical analysis 
 %%%%eval(cmmd) 
-cmmd=sprintf('!bet %s %s -f 0.2 -g 0 -m -R',name_bo_ref,name_Mask); %for use with camino
+cmmd=sprintf('!bet %s %s -f 0.2 -g 0 -m',name_bo_ref,name_Mask); %for use with camino
 eval(cmmd)
-cmmd=sprintf('!bet %s %s -f 0.4 -g 0 -m -R',name_bo_ref,name_Mask2);%for statistical analysis 
+cmmd=sprintf('!bet %s %s -f 0.4 -g 0 -m',name_bo_ref,name_Mask2);%for statistical analysis 
 eval(cmmd) 
 
 
