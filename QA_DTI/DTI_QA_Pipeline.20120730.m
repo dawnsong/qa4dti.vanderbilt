@@ -200,9 +200,6 @@ eval(cmmd)
 
 
 
-%%%%clear any existing mask files so code doesnt need user input
-%%%cmmd=sprintf('!rm %s%sMas*.nii',tmp,filesep);
-%%%eval(cmmd)
 
 %unzip mask files
 cmmd=sprintf('!gunzip %s%s*.gz',tmp,filesep);
@@ -275,9 +272,9 @@ pack
 % %%%CAMINO DTI FIT
 % %%%%%%%%%%%%%%%%%%%%%%%%%%
 progress='Finished segmentation. Running CAMINO-RESTORE diffusion tensor fit'
-%clear any existing mask files so code doesnt need user input
-    cmmd=sprintf('!rm %s%sMas*.nii',tmp,filesep);
-    eval(cmmd)
+%%clear any existing mask files so code doesnt need user input
+%    cmmd=sprintf('!rm %s%sMas*.nii',tmp,filesep);
+%    eval(cmmd)
     
 %unzip mask files
 cmmd=sprintf('!gunzip %s%s*.gz',tmp,filesep);
