@@ -118,8 +118,8 @@ Ny = size(Y_data,2);
 Nz = size(Y_data,3);
 Nt = size(Y_data,4);
 Ng = Nt-1; %number dwi weighted images
-Reg_Im=zeros(size(Y_data),'single'); % last entry in Reg_im will be Bo
-Reg_Im(:,:,:,end)=single(Y_data(:,:,:,end));
+Reg_ImA=zeros(size(Y_data),'single'); % last entry in Reg_im will be Bo
+Reg_ImA(:,:,:,end)=single(Y_data(:,:,:,end));
 
 
 progress='Finished loading data. Registering DWI to Bo'
@@ -144,7 +144,7 @@ if exist('target','var')
     [tranTARG rotTARG]=readAVS(avs);
     !gunzip temp.nii.gz
     load Taff;
-    T1=load_nii('temp.nii'); Reg_Im(:,:,:,end)=single(T1.img);
+    T1=load_nii('temp.nii'); Reg_ImA(:,:,:,end)=single(T1.img);
     !rm temp*
 end
 whos %% WHOS
