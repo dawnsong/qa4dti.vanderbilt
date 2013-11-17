@@ -207,16 +207,16 @@ eval(cmmd)
 %unzip mask files
 cmmd=sprintf('!gunzip %s%s*.gz',tmp,filesep);
 eval(cmmd);
-whos %% WHOS
-%find center of mass
-tem_name=sprintf('%s_mask.nii',name_Mask);
-temp=load_nii(tem_name); %temp=temp.img;
-%[centerX centerY centerZ]=com(temp); 
-%dawnsong revise
-[centerX centerY centerZ]=temp.hdr.dime.dim(2:4)/2; 
-centerX=round(centerX); centerY=round(centerY); centerZ=round(centerZ); %find better center of image
-clear temp tem_name
-pack
+%%%%whos %% WHOS
+%%%%%find center of mass
+%%%%tem_name=sprintf('%s_mask.nii',name_Mask);
+%%%%temp=load_nii(tem_name); %temp=temp.img;
+%%%%%[centerX centerY centerZ]=com(temp); 
+%%%%%dawnsong revise
+%%%%[centerX centerY centerZ]=temp.hdr.dime.dim(2:4)/2; 
+%%%%centerX=round(centerX); centerY=round(centerY); centerZ=round(centerZ); %find better center of image
+%%%%clear temp tem_name
+%%%%pack
 
 printElapsedTime(timeStart, 'Masking done');
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
