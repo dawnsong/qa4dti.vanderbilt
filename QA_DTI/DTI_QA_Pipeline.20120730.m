@@ -112,7 +112,7 @@ set(handles.text2,'String',scan_info_text,'fontsize',7);
 Y=load_nii(name_Y_data);
 Y_data=single(Y.img);
 clear Y %_________________________________________________________________________clear line
-pack
+    
 Nx = size(Y_data,1);
 Ny = size(Y_data,2);
 Nz = size(Y_data,3);
@@ -159,7 +159,7 @@ else
 end
 
 clear Y_data dwi%...........................................................................................................................clear line
-pack
+    
 nii=make_nii(Reg_Im,resolution,[0 0 0],16); nii.hdr.dime.xyzt_units=2; name_RegIm=sprintf('%s%sRegIm.nii',tmp,filesep); save_nii(nii,name_RegIm);
 cmmd=sprintf('!cp %s %s',name_RegIm,trble);
 eval(cmmd)
@@ -177,7 +177,7 @@ for vol=1:Ng
     grad_file(1:3,vol)=R*grad_file(1:3,vol);
 end
 clear  R FT F%.........
-pack
+    
 printElapsedTime(timeStart, 'Gradient table Rotation done');
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -213,7 +213,7 @@ eval(cmmd);
 %%%%[centerX centerY centerZ]=temp.hdr.dime.dim(2:4)/2; 
 %%%%centerX=round(centerX); centerY=round(centerY); centerZ=round(centerZ); %find better center of image
 %%%%clear temp tem_name
-%%%%pack
+%%%%    
 
 printElapsedTime(timeStart, 'Masking done');
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -267,7 +267,7 @@ eval(cmmd)
 printElapsedTime(timeStart, 'Segmentation done');
 
 clear Y ROI_sig s RR labelBo%__________________________________________________________clearline
-pack
+    
 % %%%%%%%%%%%%%%%%%%%%%%%%%%
 % %%%CAMINO DTI FIT
 % %%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -427,7 +427,7 @@ stdFA=std(FA(brain)); stdADC=std(ADC(brain));
 [sd ModelData Errors]=calDTIrevC_norm(single(T),single(grad_file),single(bval_vec),Reg_Im,dti_mask);
 
 clear T ADC FA mADC mFA stdFA stdADC dti_mask%______________________________________________________-clear line
-pack
+    
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % % %   MAKE MAP OF CHI-2
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -445,7 +445,7 @@ for volume=1:Ng
     end
 end
 clear sss sdf k ks brain_vol %..................................................................................................................clear line
-pack
+    
 savename=sprintf('%s/voxel_wise_chi_q',trble);
 save(savename,'sd','map')
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -474,7 +474,7 @@ set(gca,'xlim',[0 glim(2)],'linewidth',2,'XTick',[0 floor(10000*glim(2))/10000],
 pos2=[0.3360    0.0697    0.0969    0.4259];
 set(gca,'Position',pos2);
 clear hite mite %___________________________________________________________________________-clear line
-pack
+    
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%
  % PLOT RESTORE OUTLIERS
@@ -495,7 +495,7 @@ end
     axis tight
 save(sprintf('%s/Outliers', trble), 'outs')
   clear outs %____________________________________________________________________________________-clear line
-pack
+    
  %%%%%%%%%%%%%%%%%%%%%%%%%%
  % MAKE HIST OF CHI_2
  %%%%%%%%%%%%%%%%%%%%%%%%
@@ -505,7 +505,7 @@ savename=sprintf('%s/voxel_wise_chi_q',trble);
 save(savename,'sd','map')
 
 clear MM chisq chi_sq_p sd xx h%..........................................%%%..............................................................clear line
-pack
+    
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 % % PLOT MAP-EXAMPLES  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%   
@@ -527,7 +527,7 @@ end
 imagesc(RR); ct=get(gca,'clim'); ct(2)=ct(2)/2;
 close(100)
 clear RR M mm a d 
-pack
+    
 for b=1:num
     t=1:num; t=flipdim(t,2);
     name=['handles.axes' num2str(t(b)*2-1)];
@@ -578,7 +578,7 @@ for b=1:num
 end
 whos %% WHOS
 clear RR RI RR2 RRn mm value st en %____________________________________________________________________clear line
-pack
+    
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 % % PLOT MAP  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -599,7 +599,7 @@ set(gca,'Xaxislocation','bottom','Yaxislocation','right','linewidth',2,'TickDir'
 xlabel('Gradient #','fontsize',14,'fontweight','bold')
 ylabel('Axial Slice #','fontsize', 14,'fontweight','bold')
 clear map Reg_Im M%...............................................................................................................clear line
-pack
+    
 % F=getframe(fig);
 % close(fig)
 % figure(1)
@@ -612,7 +612,7 @@ close(gcf)
 
 
 clear stat_mask brain Mask_dwi_vec yh ym xxx slice slice_order slice_Ax mask_slice m labels RR2n labels_file hhh h ho csqp colmap
-pack
+    
 
 
 printElapsedTime(timeStart, 'Page-1 done');
@@ -632,7 +632,7 @@ page2FAMD_KKI_array %_____________________________________________clear lines wi
 
 
 clear grp
-pack
+    
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %SHRINK DATA FOR SIMEX AND BOOT
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -661,7 +661,7 @@ clear R %_____________________________________________________________________cl
 [FAsmx Bias]=simex(sampleVox,bval_vec,grad_file(:,1:end-1),sigmaEst,n_bo, numsim);
 clear FAsmx %____________________________________________________________________-clear line
 clear sampleVox
-pack
+    
 printElapsedTime(timeStart, 'SIMEX done');
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -677,7 +677,7 @@ nm=sprintf('%s/ModelData',trble),
 save(nm,'ModelData')
 whos %% WHOS
 clear FAboot ModelData Errors;
-pack
+    
 printElapsedTime(timeStart, 'Bootstrap done');
 
 page2SimAndBoot_KKI_array %______________________________________________________________clear lines within code
