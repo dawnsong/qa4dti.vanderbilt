@@ -210,10 +210,10 @@ eval(cmmd);
 whos %% WHOS
 %find center of mass
 tem_name=sprintf('%s_mask.nii',name_Mask);
-temp=load_nii(tem_name); temp=temp.img;
+temp=load_nii(tem_name); %temp=temp.img;
 %[centerX centerY centerZ]=com(temp); 
 %dawnsong revise
-[centerX centerY centerZ]=temp.hdr.dime(2:4)/2; 
+[centerX centerY centerZ]=temp.hdr.dim(2:4)/2; 
 centerX=round(centerX); centerY=round(centerY); centerZ=round(centerZ); %find better center of image
 clear temp tem_name
 pack
