@@ -348,9 +348,9 @@ for g=1:Ng
     outs(g)=(sum(T(:))/tot)*100;
 end
 nii=make_nii(OutlierMask,resolution,[0 0 0],2); nii.hdr.dime.xyzt_units=2; 
-nm=sprintf('%s%sOutlierMask.nii',trble,filesep);
+nm=sprintf('%s/OutlierMask.nii',trble);
 save_nii(nii,nm);
-clear nii H Y_dwi Ydata art_home atlases atlases_file g gr scan_info_text scheme out_warp_dir out_labels_dir out_dir OutlierMask nm 
+clear nii H Y_dwi Ydata art_home atlases atlases_file g gr scan_info_text scheme out_warp_dir out_labels_dir out_dir nm 
 clear T %_______________________________________________________________________________clear line
 printElapsedTime(timeStart, 'CAMINO-RESTORE DTI calc done');
 
@@ -395,7 +395,7 @@ clear affMat Taff translation rotation xt yt zt xr yr zr%.......................
 %%%%%%%%%%%%%%%%%%%%%%%%%%%  
 %%MASK IMAGE STATISTICS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
-name_Mask2_mask_nii=sprintf('%s%sMask2_mask.nii',tmp,filesep);
+name_Mask2_mask_nii=sprintf('%s/Mask2_mask.nii',tmp);
 stat_mask=load_nii(name_Mask2_mask_nii);stat_mask=stat_mask.img;stat_mask=stat_mask(:);
 
 clear bo_ref%...................................................................................................clear line
@@ -480,7 +480,6 @@ pack
  % PLOT RESTORE OUTLIERS
  %%%%%%%%%%%%%%%%%%%%%%%%
 for g=1:Ng
-    
     T=OutlierMask(:,:,:,g);
     T=T(:); T=T(brain);
     outs(g)=(sum(T)/sum(brain))*100;
