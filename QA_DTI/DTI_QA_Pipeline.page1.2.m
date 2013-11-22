@@ -1,4 +1,4 @@
-function [reportFile, state] = DTI_QA_Pipeline(file_name,output_folder,path_to_QA_DTI, n_bo, target)
+function [reportFile, state] = DTI_QA_Pipeline.page1.2(file_name,output_folder,path_to_QA_DTI, n_bo, target)
 %note for author: function from DTI_QA_Report_V17, 120730_QA_DTI.tar
 %this is release version 1.0
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
