@@ -33,6 +33,8 @@ done
 runxdummy -x && source ~/.xdummy
 scrot $(getmp ).scr.png
 
+
+
 infile=$(readlink -f $1);
 outdir=$(readlink -f ${2:-qa4dti.vanderbilt.output})
 mkdir -p $outdir

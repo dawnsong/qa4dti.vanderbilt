@@ -103,7 +103,7 @@ else
         nii=make_nii(targ, resolutionT,[0 0 0],16); save_nii(nii,'targ.nii')
     end
 end
-whos %% WHOS
+%%whos %% WHOS
 set(handles.text2,'String',scan_info_text,'fontsize',7);
 
 %grad)file is 3 columns, bval_vec is one row%  .................................................................................................................clear line
@@ -147,7 +147,7 @@ if exist('target','var')
     T1=load_nii('temp.nii'); Reg_ImA(:,:,:,end)=single(T1.img);
     !rm temp*
 end
-whos %% WHOS
+%% whos %% WHOS
 name_reg=sprintf('%s%s%s_registered.mat',tmp,filesep,Fname);
 name_reg2=sprintf('%s%sRegistration_motion.mat',trble,filesep);
 if exist(name_reg)~=0
@@ -514,7 +514,7 @@ div=1/num;
 st=1;
 
 mx=max(max(max(max(Reg_Im)))); RI=Reg_Im/mx;
-whos %% WHOS
+%% whos %% WHOS
 % determine caxis from several values
 figure(100)
 delta=round(Nz/6); deltag=round(Ng/5);
@@ -576,7 +576,7 @@ for b=1:num
     text(Nx*.7,Ny*.94,value,'fontsize',9,'color',[1 0 0])
     st=en+1;
 end
-whos %% WHOS
+%% whos %% WHOS
 clear RR RI RR2 RRn mm value st en %____________________________________________________________________clear line
     
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
@@ -675,7 +675,7 @@ FAboot=boot(sampleVox2, Errors, bval_vec,grad_file(:,1:end-1),bootnum,FAsample')
 ffstd=nanstd(FAboot);
 nm=sprintf('%s/ModelData',trble),
 save(nm,'ModelData')
-whos %% WHOS
+%% whos %% WHOS
 clear FAboot ModelData Errors;
     
 printElapsedTime(timeStart, 'Bootstrap done');
