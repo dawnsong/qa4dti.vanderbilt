@@ -37,9 +37,32 @@ scrot $(getmp ).scr.png
 dcm2nii -d n -g n -p n $1  
 nii=$(ls *.nii)
 prfx=${nii%.nii}
-mv ${prfx}.bvec ${prfx}_bvecs
-mv ${prfx}.bval ${prfx}_bvals
-mv ${prfx}.nii o${prfx}.nii
+
+#make transpose
+1d_tool.py -infile ${prfx}_bvals -transpose -write t${prfx}_bvals 
+1d_tool.py -infile ${prfx}_bvecs -transpose -write t${prfx}_bvecs 
+
+#only keep 1st B0 image
+awk -v n0=0 '{
+if($1==0 && n0==0) {n0=NR; printf("%d,", NR-1); }
+else if($1==0) pass; #print 0;
+else printf("%d,", NR-1);
+}' t${prfx}_bvals > o1b0idx
+3dcalc -a ${prfx}.nii[$(cat o1b0idx)] -expr a -prefix a${prfx}.nii
+mv -f a${prfx}.nii ${prfx}.nii
+
+awk -v n0=0 '{
+if($1==0 && n0==0) {n0=NR; print; }
+else if($1==0) pass; #print 0;
+else print;
+}' t${prfx}_bvals > a${prfx}_bvals
+awk -v n0=0 '{
+ss=$1*$1+$2*$2+$3*$3;
+if(ss==0 && n0==0) {n0=NR; print; }
+else if(ss==0) pass; #print 0;
+else print;
+}' t${prfx}_bvecs > a${prfx}_bvecs
+
 
 outdir=$(readlink -f ${WORKINGDIR:-qa4dti.vanderbilt.output})
 mkdir -p $outdir
@@ -52,7 +75,7 @@ java_path=sprintf('%s%smulti-atlas%smasi-fusion%sbin%s',QA_pathname,filesep,file
 addpath(genpath(QA_pathname));
 javaaddpath(java_path);
 
-reslice_nii('o${prfx}.nii', '${prfx}.nii');
+reslice_nii('${prfx}.nii', 'a${prfx}.nii');
 
 infile='$(readlink -f ${prfx}.nii)'; %.nii/_bvals/_bvecs must be paried
 outdir='$outdir';

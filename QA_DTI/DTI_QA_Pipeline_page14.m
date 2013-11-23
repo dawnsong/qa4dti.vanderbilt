@@ -1,4 +1,4 @@
-function [reportFile, state] = DTI_QA_Pipeline_page12(file_name,output_folder,path_to_QA_DTI, n_bo, target)
+function [reportFile, state] = DTI_QA_Pipeline_page14(file_name,output_folder,path_to_QA_DTI, n_bo, target)
 %note for author: function from DTI_QA_Report_V17, 120730_QA_DTI.tar
 %this is release version 1.0
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -738,6 +738,20 @@ progress='Finished page-3. Preparing page-4 of 4 for QA report.'
 name_fig4 = sprintf('%s/homemade_mfiles/DTI_calp4.fig',QAmfiles_loc);   
 fig4 = openfig(name_fig4);
 handles4 = guihandles(fig4);
+if 1, 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%CALC DIFFUSION DIRCTION MAP
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+V1=ones(Nx,Ny,Nz,3);
+    for k=2:4
+        dteig=sprintf('%s000%d.nii',name_dteig,k);
+        temp=load_nii(dteig);
+        V1(:,:,:,k-1)=temp.img;
+    end
+    name_v1_nii=sprintf('%s%sV1.nii',tmp,filesep);
+    nii=make_nii(V1,resolution,[0 0 0],16); save_nii(nii,name_v1_nii); 
+end
+
 
 V1=load_nii(name_v1_nii); av=V1.img; fa=load_nii(name_fa_nii);
 f=fa.img; f(f>1)=1; f(f<0)=0; 
