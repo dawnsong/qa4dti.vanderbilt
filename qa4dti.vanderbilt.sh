@@ -15,7 +15,8 @@ trim(){ trimmed=$@
     echo $trimmed ; }
 usage(){ printf "
 Usage: (%s)
-    ${0} [options] x.nii x.qa4dti.output
+    ${0} [options] x.dcm
+    ###${0} [options] x.nii x.qa4dti.output
     x.nii/x_bvecs/x_bvals must be paired exist at the same path
     options:
 " "$(grep -m1 '#% Version:' `readlink -f ${BASH_SOURCE[0]}`)" 1>&2 ; }
@@ -24,7 +25,7 @@ verbose=0;
 while [ $# -gt 0 ]; do 
     case "$1" in
         '-v') verbose=1 ; shift ;;    
-        '--template') T1TPL=$2 ; shift 2 ;;    
+        '-wd') WORKINGDIR=$2 ; shift 2 ;;    
         '-*') elog 'Unknown parameters'; usage; exit 0 ;;
         *) break ;;
     esac
@@ -33,10 +34,14 @@ done
 runxdummy -x && source ~/.xdummy
 scrot $(getmp ).scr.png
 
+dcm2nii -d n -g n -p n $1  
+nii=$(ls *.nii)
+prfx=${nii%.nii}
+mv ${prfx}.bvec ${prfx}_bvecs
+mv ${prfx}.bval ${prfx}_bvals
+mv ${prfx}.nii o${prfx}.nii
 
-
-infile=$(readlink -f $1);
-outdir=$(readlink -f ${2:-qa4dti.vanderbilt.output})
+outdir=$(readlink -f ${WORKINGDIR:-qa4dti.vanderbilt.output})
 mkdir -p $outdir
 
 export FSLOUTPUTTYPE=NIFTI_GZ
@@ -47,11 +52,13 @@ java_path=sprintf('%s%smulti-atlas%smasi-fusion%sbin%s',QA_pathname,filesep,file
 addpath(genpath(QA_pathname));
 javaaddpath(java_path);
 
-infile='$infile'; %.nii/_bvals/_bvecs must be paried
+reslice_nii('o${prfx}.nii', '${prfx}.nii');
+
+infile='$(readlink -f ${prfx}.nii)'; %.nii/_bvals/_bvecs must be paried
 outdir='$outdir';
 
 
 %Run
-DTI_QA_Pipeline.page1.2(infile, outdir, QA_pathname);
+DTI_QA_Pipeline_page12(infile, outdir, QA_pathname);
 eom
 
