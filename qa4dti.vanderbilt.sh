@@ -39,8 +39,8 @@ nii=$(ls *.nii)
 prfx=${nii%.nii}
 
 #make transpose
-1d_tool.py -infile ${prfx}_bvals -transpose -write t${prfx}_bvals 
-1d_tool.py -infile ${prfx}_bvecs -transpose -write t${prfx}_bvecs 
+1d_tool.py -infile ${prfx}.bval -transpose -write t${prfx}_bvals 
+1d_tool.py -infile ${prfx}.bvec -transpose -write t${prfx}_bvecs 
 
 #only keep 1st B0 image
 awk -v n0=0 '{
@@ -77,7 +77,7 @@ javaaddpath(java_path);
 
 reslice_nii('${prfx}.nii', 'a${prfx}.nii');
 
-infile='$(readlink -f ${prfx}.nii)'; %.nii/_bvals/_bvecs must be paried
+infile='$(readlink -f a${prfx}.nii)'; %.nii/_bvals/_bvecs must be paried
 outdir='$outdir';
 
 

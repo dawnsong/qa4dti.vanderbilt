@@ -42,7 +42,12 @@ bval_vec=bv;
 rot=Y.hdr.hist.rot_orient;
 flip=Y.hdr.hist.flip_orient;
 [t s]=sort(rot);
-grad_file=gf(:,s);
+%dawnsong
+if isempty(s),
+    grad_file=gf;
+else
+    grad_file=gf(:,s);
+end
 k=(flip~=0);
 grad_file(:,k)=-grad_file(:,k);
    
