@@ -16,6 +16,7 @@ trim(){ trimmed=$@
 usage(){ printf "
 Usage: (%s)
     ${0} [options] x.dcm
+    if x.dcm is a symbol link, the original dir containing DICOM must be in the same level with x.dcm, or dcm2nii will not work
     ###${0} [options] x.nii x.qa4dti.output
     x.nii/x_bvecs/x_bvals must be paired exist at the same path
     options:

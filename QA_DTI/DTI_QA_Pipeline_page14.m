@@ -244,7 +244,6 @@ segs = run_nls_fusions_single(atlases, labels, targets, out_dir, out_atlas_dir, 
 cmmd=sprintf('!cp %s%smulti-atlas/nls-fusion/bo_ref_est.nii %s/multi_atlas_labels.nii',output_folder,filesep,trble);
 eval(cmmd)
 
-end
 % % % %   END andrew code %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 Y=load_untouch_nii(segs{1}); Y.hdr.dime.dim(6)=1; save_untouch_nii(Y,segs{1});
@@ -269,7 +268,8 @@ eval(cmmd)
 printElapsedTime(timeStart, 'Segmentation done');
 
 clear Y ROI_sig s RR labelBo%__________________________________________________________clearline
-    
+end
+
 % %%%%%%%%%%%%%%%%%%%%%%%%%%
 % %%%CAMINO DTI FIT
 % %%%%%%%%%%%%%%%%%%%%%%%%%%
