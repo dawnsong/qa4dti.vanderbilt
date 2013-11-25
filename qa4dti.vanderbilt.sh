@@ -82,6 +82,6 @@ outdir='$outdir';
 
 
 %Run
-DTI_QA_Pipeline_page12(infile, outdir, QA_pathname);
+DTI_QA_Pipeline_page14(infile, outdir, QA_pathname);
 eom
 

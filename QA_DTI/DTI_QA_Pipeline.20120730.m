@@ -2,7 +2,7 @@ function [reportFile, state] = DTI_QA_Pipeline(file_name,output_folder,path_to_Q
 %note for author: function from DTI_QA_Report_V17, 120730_QA_DTI.tar
 %this is release version 1.0
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%Xiaowei Song, Change according to version 1.2
+%Xiaowei Song, made Changes to/above version 1.2
 %2013111
 %%% TROUBLESHOOTING VALUES
 % flag=1;
