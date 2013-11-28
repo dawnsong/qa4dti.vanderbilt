@@ -303,6 +303,12 @@ eval(cmmd);
     cmmd=sprintf('!image2voxel -4dimage %s -outputfile %s',name_RegIm,name_dwi_Bfloat);
     eval(cmmd)
 
+    %%%%estimate sigma, dawnsong
+    cmmd=sprintf('!datastats -inputfile %s -schemefile %s -bgmask %s|sed "1,2d"> datastats.log', name_Y_data, name_scheme_text ,name_Mask);
+    eval(cmmd)
+    x=load('datastats.log');
+    sigmaEst=x(end,4);
+    %%%%
 
     %fit tensor with ROBUST fit
     name_outliermap=sprintf('%s%soutliermap',tmp,filesep);
