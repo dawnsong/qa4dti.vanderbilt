@@ -304,7 +304,7 @@ eval(cmmd);
     eval(cmmd)
 
     %%%%estimate sigma, dawnsong
-    cmmd=sprintf('!datastats -inputfile %s -schemefile %s -bgmask %s|sed "1,2d"> datastats.log', name_Y_data, name_scheme_text ,name_Mask);
+    cmmd=sprintf('!datastats -inputfile %s -schemefile %s -bgmask %s |sed "1,2d"> datastats.log', name_Y_data, name_scheme_text ,name_Mask_mask_nii);
     eval(cmmd)
     x=load('datastats.log');
     sigmaEst=x(end,4);
