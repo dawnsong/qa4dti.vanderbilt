@@ -1,7 +1,7 @@
 #! /bin/bash
 #
 # runme4quest.sh
-#% Init: 2013-11-12 19:53
+#% Version: 2013-11-12 19:53
 #% Copyright (C) 2013~2020 Xiaowei.Song <dawnwei.song@gmail.com>
 #% http://restfmri.net
 #% Distributed under terms of the AFL (Academy Free license).
@@ -9,6 +9,7 @@
 CALLDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 elog(){ echo "$@" 1>&2 ; }
  echo "$(date) | $0 '"$@"'" >> $(basename $0).LOG
+IsFileExist(){ test ! -z "$1" && test -f "$1" ;  }
 trim(){ trimmed=$@
     trimmed="${trimmed#"${trimmed%%[![:space:]]*}"}"   # remove leading whitespace characters
     trimmed="${trimmed%"${trimmed##*[![:space:]]}"}"   # remove trailing whitespace characters
@@ -32,11 +33,19 @@ while [ $# -gt 0 ]; do
     esac
 done
 
+if ! IsFileExist $1; then usage; exit 1; fi
+
 runxdummy -x && source ~/.xdummy
 scrot $(getmp ).scr.png
 
-dcm2nii -d n -g n -p n $1  
-nii=$(ls *.nii)
+dcm=`readlink -f $1`
+ext=${dcm##*.}
+if [[ x"$ext" == x'nii' ]]; then 
+    nii=$dcm
+else
+    dcm2nii -d n -g n -p n $1  
+    nii=$(ls *.nii)
+fi
 prfx=${nii%.nii}
 
 #make transpose

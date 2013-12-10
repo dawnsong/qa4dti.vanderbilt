@@ -308,6 +308,7 @@ eval(cmmd);
     eval(cmmd)
     x=load('datastats.log');
     sigmaEst=x(end,4);
+    sigmaEst=2500;
     %%%%
 
     %fit tensor with ROBUST fit
