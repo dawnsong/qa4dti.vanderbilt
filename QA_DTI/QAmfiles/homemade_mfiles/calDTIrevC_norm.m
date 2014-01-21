@@ -40,7 +40,7 @@ for vol=1:size(gs,1)-1
     chi_sq_p(mask,vol)=delta_S(mask,vol)./normS(mask);
 end
 
-chi_sq_p(isnan(chi_sq_p))=0;
+
 
 % sd(Sd>=1)=NaN;
 % sd(Sd==Inf)=NaN;
