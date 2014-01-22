@@ -374,9 +374,6 @@ clear T ADC FA mADC mFA stdFA stdADC dti_mask%__________________________________
 % % %   MAKE MAP OF CHI-2
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 map=zeros(Ng,Nz);
-
-sd(brain==0)=0; % more restricted mask , dawnsong
-
 brain_vol=reshape(brain,Nx,Ny,Nz);
 sd=reshape(sd,Nx,Ny,Nz,Ng);
 for volume=1:Ng
@@ -466,6 +463,7 @@ for b=1:num
         M=map(:,st:en);
         mm=min(reshape(M,[],1));
         [a d]=find(M==mm);
+        if isempty(d), continue, end
         axes(eval(name))
         RR = squeeze(RI(:,:,st+d(1)-1,a(1)));
         RR = permute(RR, [2 1]); RR=flipdim(RR,1); RR=repmat(RR,[1 1 3]);
