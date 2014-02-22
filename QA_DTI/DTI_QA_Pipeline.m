@@ -580,8 +580,14 @@ R=reshape(R,Nx*Ny*Nz,Ng+1);
 sampleVox=R(NewMask,:);
 sampleVox=permute(sampleVox,[2 1]);
 clear R %_____________________________________________________________________clear line
-[FAsmx Bias]=simex(sampleVox,bval_vec,grad_file(:,1:end-1),sigmaEst,n_bo, numsim);
-clear FAsmx %____________________________________________________________________-clear line
+fsimex=sprintf('%s/simex.mat',trble);
+if exist(fsimex),
+    load(fsimex)
+else
+    [FAsmx Bias]=simex(sampleVox,bval_vec,grad_file(:,1:end-1),sigmaEst,n_bo, numsim);
+    clear FAsmx %____________________________________________________________________-clear line
+    save(fsimex, 'Bias')
+end
 clear sampleVox
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %BOOT (not with RESTORE yet?)
@@ -590,7 +596,13 @@ progress='SIMEX finished. Running Bootstrap'
  ModelData=reshape(ModelData,Ng,Nx*Ny*Nz); 
 sampleVox2=ModelData(:,NewMask); Errors=Errors(:,NewMask);
 FAsample=FA(NewMask);
-FAboot=boot(sampleVox2, Errors, bval_vec,grad_file(:,1:end-1),bootnum,FAsample');
+fboot=sprintf('%s/boot.mat',trble);
+if exist(fboot),
+    load(fboot)
+else
+    FAboot=boot(sampleVox2, Errors, bval_vec,grad_file(:,1:end-1),bootnum,FAsample');
+    save(fboot, 'FAboot')
+end
 ffstd=nanstd(FAboot);
 nm=sprintf('%s/ModelData',trble);
 save(nm,'ModelData')
