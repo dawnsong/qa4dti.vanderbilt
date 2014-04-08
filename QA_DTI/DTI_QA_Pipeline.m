@@ -384,6 +384,7 @@ for volume=1:Ng
         map(volume,slice)=map(volume,slice)*Ng;  % should be in units of chi_sq_p
     end
 end
+map(isnan(map))=0.2;
 clear sss sdf k ks brain_vol %..................................................................................................................clear line
  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
