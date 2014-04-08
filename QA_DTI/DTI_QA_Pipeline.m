@@ -373,7 +373,7 @@ clear T ADC FA mADC mFA stdFA stdADC dti_mask%__________________________________
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % % %   MAKE MAP OF CHI-2
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-map=zeros(Ng,Nz); map(:)=0.2; %default as max
+map=zeros(Ng,Nz); 
 brain_vol=reshape(brain,Nx,Ny,Nz);
 sd=reshape(sd,Nx,Ny,Nz,Ng);
 for volume=1:Ng
