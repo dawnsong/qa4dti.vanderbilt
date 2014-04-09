@@ -392,7 +392,6 @@ clear sss sdf k ks brain_vol %..................................................
 hite=trimmean(map,3); %%remove from ev
 mite=trimmean(map',3)';
 
-map(isnan(map))=0.2; % after projections, then fill NaN with max value
 
 axes(handles.axes36) %%gradient number
  plot(1:Ng,mite,'k','linewidth',2);
@@ -511,6 +510,7 @@ clear RR RI RR2 RRn mm value st en %____________________________________________
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 % % PLOT MAP  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+map(isnan(map))=0.2; %  fill NaN with max value before drawing
 axes(handles.axesM)
 imagesc(map');
 colorbar('location','WestOutside');
