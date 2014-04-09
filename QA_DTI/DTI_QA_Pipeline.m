@@ -384,7 +384,6 @@ for volume=1:Ng
         map(volume,slice)=map(volume,slice)*Ng;  % should be in units of chi_sq_p
     end
 end
-map(isnan(map))=0.2;
 clear sss sdf k ks brain_vol %..................................................................................................................clear line
  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -392,6 +391,8 @@ clear sss sdf k ks brain_vol %..................................................
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% % %     
 hite=trimmean(map,3); %%remove from ev
 mite=trimmean(map',3)';
+
+map(isnan(map))=0.2; % after projections, then fill NaN with max value
 
 axes(handles.axes36) %%gradient number
  plot(1:Ng,mite,'k','linewidth',2);
